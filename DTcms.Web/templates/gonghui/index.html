@@ -1,0 +1,358 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>潍坊工会网</title>
+<link href="<%templateskin%>/style/style.css" rel="stylesheet" type="text/css" />
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+    <script>
+        //截短字符串
+        function truncateStr(str, len) {
+            var short_str = str.substr(0, len);
+            if (str.length > len) {
+                short_str = short_str + "...";
+            }
+            return short_str;
+        }
+
+    </script>
+</head>
+
+<body>
+<div class="waper">
+
+<%template src="_header.html"%>
+
+    <style>
+        #slides-wrapper {
+            position:relative;
+        }
+        .slide-img,.slid-img>img {
+            height:100%;
+            width:100%;
+        }
+        .slide-footer {
+            position:absolute;
+            bottom:0;
+            width:100%;
+            height:60px;
+            background:rgba(0,0,0,0.4);
+        }
+        .slide-title {
+            padding:10px;
+            color:white;
+        }
+            .slide-title a {
+                color:white;
+                text-decoration:none;
+            }
+        .slide-button-wrapper {
+            position:absolute;
+            bottom:4px;
+            right:4px;
+        }
+        .slide-btn {
+            padding:3px 6px;
+            float:left;
+            border:1px solid gray;
+            background-color:black;
+            color:white;
+            margin-left:2px;
+            cursor:pointer;
+
+        }
+
+        .slide-btn.active {
+            color:orange;
+            border:1px solid orange;
+        }
+        #slide-img {
+            width:100%;
+            height:100%;
+        }
+    </style>
+
+<div class="main">
+ <div class="index">
+  <div class="index1 clearfix">
+
+	<div class="fl index_news_pic" id="slides-wrapper" style="height:244px;">
+        <div class="slide-img">
+            <img id="slide-img" src=""/>
+        </div>
+        <div class="slide-footer">
+            <div class="slide-title">
+                <a id="slide-title"></a>
+            </div>
+            <div class="slide-button-wrapper">
+
+            </div>
+        </div>
+	</div>
+      <ul id="slidebox" style="display:none;">
+           <%set DataTable slides=get_article_list("gonghuinews", 58, 1, "status=0 and is_top=1 and img_url<>''")%>
+        <%foreach(DataRow dr in slides.Rows)%>
+          <li><img src="{dr[img_url]}" /><a href="<%linkurl("news_show",{dr[id]})%>">{dr[title]}</a></li>
+          <%/foreach%>
+        </ul>
+      <script>
+          $(function () {
+              var len = $('#slidebox>li').length;
+              for (var i = 1; i <= len; i++) {
+                  $("<div class='slide-btn'>" + i + "</div>").appendTo(".slide-button-wrapper").click(function () {
+                      var li = $('#slidebox>li').eq($(this).html()-1);
+                      $("#slide-img").attr("src", li.children("img").attr("src"));
+                      $("#slide-title").attr("href", li.children("a").attr("href")).html(li.children("a").html());
+                      $(this).addClass("active");
+                      $(this).siblings(".active").removeClass("active");
+                  });
+              }
+
+              if ($('#top-news').length > 0) {
+                  $('#top-news').html(truncateStr($("#top-news").html(),86));
+              }
+
+              $('.slide-btn').first().click();
+          });
+      </script>
+  <div class="index_ghyw fl">
+   <div class="index_ghyw_bt clearfix font_bt">工会要闻<a href="<%linkurl("list_gonghui",58)%>">更多>></a></div>
+      <%set DataTable topNewsList=get_article_list("gonghuinews", 58, 1, "status=0 and is_top=1 and img_url<>''")%>
+        <%foreach(DataRow dr in topNewsList.Rows)%>
+   <p class="toutiao"><a href="<%linkurl("news_show",{dr[id]})%>">{dr[title]}</a>…</p>
+   <p class="xuxian index_yw">   &nbsp;&nbsp;&nbsp;&nbsp;<a id="top-news" href="<%linkurl("news_show",{dr[id]})%>">{dr[zhaiyao]}</a></p>
+      <%/foreach%>
+   <ul class="index_yw_list">
+
+    <%set DataTable newslist=get_article_list("gonghuinews",58,3,"status=0")%>
+    <%foreach(DataRow item in newslist.Rows)%>
+    <li><a href="<%linkurl("news_show",{item[id]})%>">{item[title]}</a>[<%datetostr({item[add_time]},MM-dd)%>]</li>
+    <%/foreach%>
+   </ul>
+  </div>
+  <div class="index_zuinews">
+  	<div class="index_zuinews_bt clearfix font_bt">最新动态<a href="#"></a></div>
+    <ul class="index_fr_news">
+     <%set DataTable newslist2=get_article_list("gonghuinews",0,7,"status=0")%>
+    <%foreach(DataRow item2 in newslist2.Rows)%>
+    <li><a style="overflow: hidden;
+    width: 100%;
+    display: inline-block;
+    white-space: nowrap;position:relative;top:5px;
+    text-overflow: ellipsis;" href="<%linkurl("news_show",{item2[id]})%>">{item2[title]}</a></li>
+    <%/foreach%>
+    </ul>
+  </div>
+</div>
+<div class="index2 clearfix" style="height:100px;">
+<div class="index2_tuijian" style="position:relative;top:-60px;">
+ <div class="index2_tuijian_bt font_bt clearfix">特别推荐<a href="#"><img src="<%templateskin%>/image/index_more.jpg" /></a></div>
+ <ul class="index2_list">
+     <%set DataTable newslist3=get_article_list("gonghuinews",0,6,"status=0 and is_red=1")%>
+    <%foreach(DataRow item3 in newslist3.Rows)%>
+    <li><a href="<%linkurl("news_show",{item3[id]})%>">{item3[title]}</a></li>
+    <%/foreach%>
+ </ul>
+</div>
+<div class="index2_gongyun" style="margin-left:13px;position:relative;top:-60px;">
+ <div class="index2_gongyun_bt font_bt clearfix">潍坊工运<a href="<%linkurl("list_gonghui",56)%>"><img src="<%templateskin%>/image/index_more.jpg" /></a></div>
+ <ul class="index2_list">
+      <%set DataTable newslist4=get_article_list("gonghuinews",56,6,"status=0")%>
+    <%foreach(DataRow item4 in newslist4.Rows)%>
+    <li><a href="<%linkurl("news_show",{item4[id]})%>">{item4[title]}</a></li>
+    <%/foreach%>
+ </ul>
+</div>
+<div class="index2_link">
+<p><a href="#"><img src="<%templateskin%>/image/index_frlink1.png" /></a></p>
+<p style="margin-top:8px;"><a href="#"><img src="<%templateskin%>/image/index_frlink2.png" /></a></p>
+<p style="margin-top:8px;"><a href="#"><img src="<%templateskin%>/image/index_frlink3.png" /></a></p>
+
+</div>
+</div>
+<Div class="index_banner" style="height:160px;"><img style="margin-top:-38px;" src="<%templateskin%>/image/index_banner.jpg" /></Div>
+<div class="index2 clearfix">
+<div class="index2_tuijian">
+ <div class="index2_tuijian_bt font_bt clearfix">政策法规<a href="<%linkurl("list_gonghui",61)%>"><img src="<%templateskin%>/image/index_more.jpg" /></a></div>
+ <ul class="index2_list">
+
+     <%set DataTable newslist5=get_article_list("gonghuinews",61,6,"status=0")%>
+    <%foreach(DataRow item5 in newslist5.Rows)%>
+    <li><a href="<%linkurl("news_show",{item5[id]})%>">{item5[title]}</a></li>
+    <%/foreach%>
+
+ </ul>
+</div>
+<div class="index2_gongyun" style="margin-left:13px;">
+ <div class="index2_gongyun_bt font_bt clearfix">经验学习<a href="<%linkurl("list_gonghui",73)%>"><img src="<%templateskin%>/image/index_more.jpg" /></a></div>
+ <ul class="index2_list">
+      <%set DataTable newslist6=get_article_list("gonghuinews",73,6,"status=0")%>
+    <%foreach(DataRow item6 in newslist6.Rows)%>
+    <li><a href="<%linkurl("news_show",{item6[id]})%>">{item6[title]}</a></li>
+    <%/foreach%>
+
+ </ul>
+</div>
+<div class="index_zuinews">
+  	<div class="index_zuinews_bt clearfix font_bt">党风廉政建设<a href="<%linkurl("list_gonghui",64)%>">更多>></a></div>
+    <ul class="index_fr_news" style="padding-bottom:15px;">
+        <%set DataTable newslist7=get_article_list("gonghuinews",64,6,"status=0")%>
+    <%foreach(DataRow item7 in newslist7.Rows)%>
+    <li><a style="overflow: hidden;
+    width: 100%;
+    display: inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;position:relative;top:5px;" href="<%linkurl("news_show",{item7[id]})%>">{item7[title]}</a></li>
+    <%/foreach%>
+    </ul>
+  </div>
+</div>
+
+
+<div class="index_hy clearfix">
+<p><img src="<%templateskin%>/image/index_zg_bt.jpg" /></p>
+<div class="clearfix">
+<Div class="index_hy1">
+	<p class="index_hy1_bt clearfix"><a href="<%linkurl("list_gonghui",66)%>" class="dq">公示公告</a><a href="<%linkurl("list_gonghui",67)%>">会员服务卡</a></p>
+  <ul class="index2_list">
+
+ </ul>
+
+    <div style="display:none">
+        <%set DataTable newslist8=get_article_list("gonghuinews",66,6,"status=0")%>
+    <%foreach(DataRow item8 in newslist8.Rows)%>
+    <li><a href="<%linkurl("news_show",{item8[id]})%>">{item8[title]}</a></li>
+    <%/foreach%>
+    </div>
+    <div style="display:none">
+        <%set DataTable newslist81=get_article_list("gonghuinews",67,6,"status=0")%>
+    <%foreach(DataRow item81 in newslist81.Rows)%>
+    <li><a href="<%linkurl("news_show",{item81[id]})%>">{item81[title]}</a></li>
+    <%/foreach%>
+    </div>
+</Div>
+<Div class="index_hy1" style="margin-left:5px;">
+	<p class="index_hy1_bt clearfix"><a href="<%linkurl("list_gonghui",69)%>" class="dq">帮扶救助</a><a href="<%linkurl("list_gonghui",71)%>">法律援助</a></p>
+  <ul class="index2_list">
+    
+
+ </ul>
+
+    <div style="display:none;">
+<%set DataTable newslist9=get_article_list("gonghuinews",69,6,"status=0")%>
+    <%foreach(DataRow item9 in newslist9.Rows)%>
+    <li><a href="<%linkurl("news_show",{item9[id]})%>">{item9[title]}</a></li>
+    <%/foreach%>
+    </div>
+    <div style="display:none;">
+<%set DataTable nl=get_article_list("gonghuinews",71,6,"status=0")%>
+    <%foreach(DataRow it in nl.Rows)%>
+    <li><a href="<%linkurl("news_show",{it[id]})%>">{it[title]}</a></li>
+    <%/foreach%>
+    </div>
+</Div>
+<Div class="index_hy1"  style="margin-left:5px;">
+	<p class="index_hy1_bt clearfix"><a href="<%linkurl("list_gonghui",68)%>" class="dq">就业创业</a><a href="<%linkurl("list_gonghui",70)%>">互助保障</a><a href="<%linkurl("list_gonghui",72)%>">身心关爱</a></p>
+  <ul class="index2_list">
+ </ul>
+
+    <div style="display:none;">
+<%set DataTable nl2=get_article_list("gonghuinews",68,6,"status=0")%>
+    <%foreach(DataRow it2 in nl2.Rows)%>
+    <li><a href="<%linkurl("news_show",{it2[id]})%>">{it2[title]}</a></li>
+    <%/foreach%>
+    </div>
+    <div style="display:none;">
+<%set DataTable nl3=get_article_list("gonghuinews",70,6,"status=0")%>
+    <%foreach(DataRow it3 in nl3.Rows)%>
+    <li><a href="<%linkurl("news_show",{it3[id]})%>">{it3[title]}</a></li>
+    <%/foreach%>
+    </div>
+    <div style="display:none;">
+<%set DataTable nl4=get_article_list("gonghuinews",72,6,"status=0")%>
+    <%foreach(DataRow it4 in nl4.Rows)%>
+    <li><a href="<%linkurl("news_show",{it4[id]})%>">{it4[title]}</a></li>
+    <%/foreach%>
+    </div>
+
+</Div>
+    <script>
+        $(".index_hy1>.index_hy1_bt>a").mouseover(function () {
+            $(this).siblings(".dq").removeClass("dq");
+            $(this).addClass("dq");
+            $(this).parent().next().html($(this).parents(".index_hy1").children("div").eq($(this).index()).html());
+        });
+        
+
+        $(function () {
+            $(".index_hy1>div>li>a").each(function () {
+                $(this).html(truncateStr($(this).html(),14));
+            });
+            $(".index_hy1>.index_hy1_bt>a:nth-child(1)").mouseover();
+        });
+
+    </script>
+<p class="index_zg_fg"><img src="<%templateskin%>/image/index_zg_fg.png" /></p>
+<div class="denglu" style="float:left;">
+	<p><img src="<%templateskin%>/image/index_dl.jpg" /></p>
+  <table width="200" border="0" cellspacing="0" cellpadding="0" style="margin-top:15px;">
+  <tr>
+    <td width="72" height="36">姓&nbsp;&nbsp;&nbsp;&nbsp;名：</td>
+    <td width="134">
+      <input style="width:110px;" name="textfield" type="text" id=</td size="17">
+  </tr>
+  <tr>
+    <td height="36">会员卡号：</td>
+    <td><input style="width:110px;" name="&lt;/td" type="text" id="&lt;/td2" size="17" /></td>
+  </tr>
+  <tr>
+    <td height="36">验&nbsp;证&nbsp;码：</td>
+    <td><input name="&lt;/td2" type="text" id="&lt;/td3" size="7"  style="width:55px;"/>
+      <img id="captcha" src="http://ghpt.weifang.gov.cn/lingwuqt/colorimage?date=Fri%20Dec%2011%202015%2008:48:45%20GMT+0800%20(%E4%B8%AD%E5%9B%BD%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4)" width="50" height="25" align="absmiddle" /></td>
+      <script>$('#captcha').click(function () {
+    $(this).attr("src", "http://ghpt.weifang.gov.cn/lingwuqt/colorimage?date=" + Date());
+
+    });</script>
+  </tr>
+  <tr>
+    <td height="40">&nbsp;</td>
+    <td><input type="submit" name="button" id="submit-button"  value="登录" />
+      &nbsp;
+<input type="submit" name="button2" id="button2" value="重填" /></td>
+  </tr>
+</table>
+</div>
+
+</div>
+
+<div class="hy_link clearfix">
+    <style>
+    </style>
+ <ul class="img-links">
+  <li><a href="#"><img src="<%templateskin%>/image/hy_link1.png" /></a></li>
+   <li><a href="#"><img src="<%templateskin%>/image/hy_link2.png" /></a></li>
+    <li><a href="#"><img src="<%templateskin%>/image/hy_link3.png" /></a></li>
+     <li><a href="#"><img src="<%templateskin%>/image/hy_link4.png" /></a></li>
+      <li><a href="#"><img src="<%templateskin%>/image/hy_link5.png" /></a></li>
+       <li><a href="#"><img src="<%templateskin%>/image/hy_link6.png" /></a></li>
+     <li><a href="#"><img src="<%templateskin%>/image/hy_link7.png" /></a></li>
+ </ul>
+</div>
+
+</div>
+
+
+<%template src="_footer.html"%>
+ </div>
+</div>
+</div> 
+</body>
+</html>
+<script>
+
+    $('#submit-button').click(function () {
+        $.get("http://ghpt.weifang.gov.cn/lingwuqt/checkin.jsp?name=few&cardcode=ewf&randCode=59", function (res) {
+            alert(res);
+        });
+    });
+</script>

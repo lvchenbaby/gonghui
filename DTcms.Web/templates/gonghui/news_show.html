@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>潍坊工会网</title>
+<link href="<%templateskin%>/style/style.css" rel="stylesheet" type="text/css" />
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+    <script>
+
+//截短字符串
+        function truncateStr(str, len) {
+            var short_str = str.substr(0, len);
+            if (str.length > len) {
+                short_str = short_str + "...";
+            }
+            return short_str;
+        }
+
+        //链接下载
+        function downLink(point, linkurl) {
+            if (point > 0) {
+                dialog({
+                    title: '提示',
+                    content: "下载需扣除" + point + "个积分<br />重复下载不扣积分，需要继续吗？",
+                    okValue: '确定',
+                    ok: function () {
+                        window.location.href = linkurl;
+                    },
+                    cancelValue: '取消',
+                    cancel: function () { }
+                }).showModal();
+            } else {
+                window.location.href = linkurl;
+            }
+            return false;
+        }
+    </script>
+</head>
+
+<body>
+<div class="waper">
+<%template src="_header.html"%>
+
+<div class="main">
+ <div class="index">
+  <div class="clearfix">
+   <div class="sub_left">
+   	<div class="sub_left_bt font_bt">工会要闻<p class="fr">您当前的位置：<a href="/index.aspx">首页</a><%=get_category_menu("list_gonghui", model.category_id)%></p></div>
+    <div class="news1">
+    	<p class="news1_bt">{model.title}</p>
+      <p class="xian"></p>
+      <p class="news1_time">来源： 本站 发布时间时间：<%datetostr({model.add_time},yyy-MM-dd)%></p>
+      <p class="xian"></p>
+      <div class="zhengwen">　
+          {model.content}
+
+          <div  class="download">
+              <ul class="attach-list">
+      <%if(model.attach!=null)%>
+      <%foreach(DTcms.Model.article_attach modelt in model.attach)%>
+      <li>
+        <span><a href="javascript:;" onclick="downLink({modelt.point},'{config.webpath}tools/download.ashx?site={site.build_path}&id={modelt.id}');">点击下载</a></span>
+        附件：{modelt.file_name}
+        <i>大小：
+          <%if {modelt.file_size}>1024%>
+            <%csharp%>
+            string tempSize = (modelt.file_size/1024f).ToString("#.##");
+            <%/csharp%>
+            {tempSize}MB
+          <%else%>
+            {modelt.file_size}KB
+          <%/if%>
+        </i>
+        <i>下载：<script type="text/javascript" src="{config.webpath}tools/submit_ajax.ashx?action=view_attach_count&id={modelt.id}"></script>次</i>
+        <i>所需积分：{modelt.point}分</i>
+      </li>
+      <%/foreach%>
+      <%/if%>
+    </ul>
+
+          </div>
+    </div>
+   </div>
+  
+  </div>
+       <div class="sub_right">
+   	<div class="sub_frnews">
+    	<div class="sub_frnews_bt font_bt clearfix">最新公告<a href="<%linkurl("list_gonghui",66)%>">更多>></a></div>
+      <ul class="index_fr_news">
+     <%set DataTable newslist5=get_article_list("gonghuinews",66,7,"status=0")%>
+    <%foreach(DataRow item5 in newslist5.Rows)%>
+    <li><a href="<%linkurl("news_show",{item5[id]})%>">{item5[title]}</a></li>
+    <%/foreach%>
+    </ul>
+    </div>
+    <div class="sub_frnews" style="margin-top:10px;">
+    	<div class="sub_frnews_bt font_bt clearfix">热点新闻<a href="<%linkurl("list_gonghui",58)%>">更多>></a></div>
+      <ul class="index_fr_news">
+    <%set DataTable newslist=get_article_list("gonghuinews",58,7,"status=0")%>
+    <%foreach(DataRow item in newslist.Rows)%>
+    <li><a href="<%linkurl("news_show",{item[id]})%>">{item[title]}</a></li>
+    <%/foreach%>
+
+    </ul>
+    </div>
+           <script>
+               $(".sub_frnews>ul>li>a").each(function () {
+                   $(this).html(truncateStr($(this).html(),12));
+               });
+           </script>
+
+    <div>
+     <ul class="sub_right_link">
+     	<li><a href="#"><img src="<%templateskin%>/image/sub_fr01.png" /></a></li>
+      <li><a href="#"><img src="<%templateskin%>/image/sub_fr02.png" /></a></li>
+      <li><a href="#"><img src="<%templateskin%>/image/sub_fr03.png" /></a></li>
+      <li><a href="#"><img src="<%templateskin%>/image/sub_fr04.png" /></a></li>
+     </ul>
+
+    </div>
+   
+   
+   </div>
+   <%template src="_footer.html"%>
+ </div>
+</div>
+</div> 
+</body>
+</html>

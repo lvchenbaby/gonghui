@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>潍坊工会网</title>
+<link href="<%templateskin%>/style/style.css" rel="stylesheet" type="text/css" />
+
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+    <script>
+
+        //截短字符串
+        function truncateStr(str, len) {
+            var short_str = str.substr(0, len);
+            if (str.length > len) {
+                short_str = short_str + "...";
+            }
+            return short_str;
+        }
+    </script>
+
+</head>
+
+<body>
+<div class="waper">
+
+<%template src="_header.html"%>
+
+<div class="main">
+ <div class="index">
+  <div class="clearfix">
+   <div class="sub_left">
+   	<div class="sub_left_bt font_bt">{model.title}<p class="fr">您当前的位置：<a href="/index.aspx">首页</a><%=get_category_menu("list_gonghui", category_id)%></p></div>
+    <ul class="sub_list">
+         <%set DataTable newsList=get_article_list(channel, category_id, pagesize, page, "status=0", out totalcount, out pagelist, "list_gonghui", category_id, "__id__")%><!--取得一个分页DataTable-->
+      <%foreach(DataRow dr in newsList.Rows)%>
+    <li><a href="<%linkurl("news_show",{dr[id]})%>">{dr[title]}</a>[<%datetostr({dr[add_time]},yyyy-MM-dd)%>]</li>
+    <%/foreach%>
+
+   </ul>
+   <!--<div class="pages"><a href="#">首页</a> <a href="#">上一页</a> <a href="#" class="curr">1</a> <a href="#">2</a> …… <a href="#">19</a> <a href="#">20</a> <a href="#">下一页</a> <a href="#">末页</a> 共有20页</div>-->
+       <div class="page-box">
+      <div class="digg">{pagelist}</div>
+    </div>
+   </div>
+   <div class="sub_right">
+   	<div class="sub_frnews">
+    	<div class="sub_frnews_bt font_bt clearfix">最新公告<a href="<%linkurl("list_gonghui",66)%>">更多>></a></div>
+      <ul class="index_fr_news">
+     <%set DataTable newslist5=get_article_list("gonghuinews",66,7,"status=0")%>
+    <%foreach(DataRow item5 in newslist5.Rows)%>
+    <li><a href="<%linkurl("news_show",{item5[id]})%>">{item5[title]}</a></li>
+    <%/foreach%>
+
+
+    </ul>
+    </div>
+    <div class="sub_frnews" style="margin-top:10px;">
+    	<div class="sub_frnews_bt font_bt clearfix">热点新闻<a href="<%linkurl("list_gonghui",58)%>">更多>></a></div>
+      <ul class="index_fr_news">
+    <%set DataTable newslist=get_article_list("gonghuinews",58,7,"status=0")%>
+    <%foreach(DataRow item in newslist.Rows)%>
+    <li><a href="<%linkurl("news_show",{item[id]})%>">{item[title]}</a></li>
+    <%/foreach%>
+
+    </ul>
+    </div>
+
+        <script>
+            $(".sub_frnews>ul>li>a").each(function () {
+                $(this).html(truncateStr($(this).html(), 12));
+            });
+           </script>
+    <div>
+     <ul class="sub_right_link">
+     	<li><a href="#"><img src="<%templateskin%>/image/sub_fr01.png" /></a></li>
+      <li><a href="#"><img src="<%templateskin%>/image/sub_fr02.png" /></a></li>
+      <li><a href="#"><img src="<%templateskin%>/image/sub_fr03.png" /></a></li>
+      <li><a href="#"><img src="<%templateskin%>/image/sub_fr04.png" /></a></li>
+     </ul>
+
+    </div>
+   
+   
+   </div>
+  </div>
+   <%template src="_footer.html"%>
+ </div>
+</div>
+</div> 
+</body>
+</html>
